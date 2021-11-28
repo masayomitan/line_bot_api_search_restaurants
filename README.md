@@ -1,1 +1,1 @@
-# line_bot_api_search_restaurants
+golangの練習でLine botを作成
