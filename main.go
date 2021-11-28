@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"github.com/joho/godotenv"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"strconv"
+	"line_bot_api_search_restaurants/service"
 )
 
 var SECRET string
@@ -30,7 +29,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func lineHandler(w http.ResponseWriter, r *http.Request) {
-	bot, err := getEnvData()
+	bot, err := service.GetEnvData()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -75,21 +74,4 @@ func sendRestoInfo(bot *linebot.Client, e *linebot.Event) {
 	if err != nil {
 		log.Print(err)
 	}
-}
-
-
-
-func getEnvData() (*linebot.Client, error ) {
-	err := godotenv.Load((".env"))
-	if err != nil {
-		panic ("envファイルの読み込みに失敗しました。")
-	}
-	SECRET = os.Getenv("SECRET_TOKEN")
-	ACCESS = os.Getenv("ACCESS_TOKEN")
-
-	bot, err := linebot.New(
-		SECRET,
-		ACCESS,
-	)
-	return bot, err
 }
