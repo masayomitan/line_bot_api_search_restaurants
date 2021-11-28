@@ -7,6 +7,7 @@ import (
 	"os"
 	"github.com/joho/godotenv"
 	"github.com/line/line-bot-sdk-go/linebot"
+	"strconv"
 )
 
 var SECRET string
@@ -23,50 +24,72 @@ func main() {
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	msg := "hellog World!!!!"
+	msg := "hello World!!!!"
 	fmt.Fprintf(w, msg)
 }
 
 
 func lineHandler(w http.ResponseWriter, r *http.Request) {
-	err := godotenv.Load((".env"))
-    if err != nil {
-			panic ("envファイルの読み込みに失敗しました。")
-    }
-		
-	SECRET = os.Getenv("SECRET")
-	ACCESS = os.Getenv("ACCESS")
-
-	bot, err := linebot.New(
-		SECRET,
-		ACCESS,
-	)
+	bot, err := getEnvData()
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
 
 	events, err := bot.ParseRequest(r)
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {
-				w.WriteHeader(400)
-			} else {
-				w.WriteHeader(500)
-			}
-			return
+			w.WriteHeader(400)
+		} else {
+			w.WriteHeader(500)
 		}
-		for _, event := range events {
-			// イベントがメッセージの受信だった場合
-			if event.Type == linebot.EventTypeMessage {
-				switch message := event.Message.(type) {
-				// メッセージがテキスト形式の場合
-				case *linebot.TextMessage:
-					replyMessage := message.Text
-					_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyMessage)).Do()
-					if err != nil {
-						log.Print(err)
-					}
+		return
+	}
+	for _, event := range events {
+
+		if event.Type == linebot.EventTypeMessage {
+			switch message := event.Message.(type) {
+			// メッセージがテキスト形式の場合
+			case *linebot.TextMessage:
+				replyMessage := message.Text
+				_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyMessage)).Do()
+				if err != nil {
+					log.Print(err)
 				}
-				// 他にもスタンプや画像、位置情報など色々受信可能
+			case *linebot.LocationMessage:
+				sendRestoInfo(bot, event)
 			}
 		}
+	}
+}
+
+func sendRestoInfo(bot *linebot.Client, e *linebot.Event) {
+	msg := e.Message.(*linebot.LocationMessage)
+
+	lat := strconv.FormatFloat(msg.Latitude, 'f', 2, 64)
+	lng := strconv.FormatFloat(msg.Longitude, 'f', 2, 64)
+
+	replyMsg := fmt.Sprintf("緯度：%s\n経度：%s", lat, lng)
+
+	_, err := bot.ReplyMessage(e.ReplyToken, linebot.NewTextMessage(replyMsg)).Do()
+	if err != nil {
+		log.Print(err)
+	}
+}
+
+
+
+func getEnvData() (*linebot.Client, error ) {
+	err := godotenv.Load((".env"))
+	if err != nil {
+		panic ("envファイルの読み込みに失敗しました。")
+	}
+	SECRET = os.Getenv("SECRET_TOKEN")
+	ACCESS = os.Getenv("ACCESS_TOKEN")
+
+	bot, err := linebot.New(
+		SECRET,
+		ACCESS,
+	)
+	return bot, err
 }
