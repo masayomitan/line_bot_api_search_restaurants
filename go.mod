@@ -2,7 +2,7 @@
 module line_bot_api_search_restaurants
 
 //go 1.15
-go 1.14
+go 1.11
 
 require (
 	github.com/cosmtrek/air v1.27.8 // indirect
