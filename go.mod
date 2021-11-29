@@ -1,7 +1,8 @@
 // module github.com/line/line-bot-sdk-go/v7/linebot
 module line_bot_api_search_restaurants
 
-go 1.15
+//go 1.15
+go 1.12.17
 
 require (
 	github.com/cosmtrek/air v1.27.8 // indirect
