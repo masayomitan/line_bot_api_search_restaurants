@@ -9,8 +9,9 @@ import (
 
 var SECRET string
 var ACCESS string
+var HOTPEPPER string
 
-func GetEnvData() (*linebot.Client, error ) {
+func GetLineToken() (*linebot.Client, error ) {
 	err := godotenv.Load((".env"))
 	if err != nil {
 		panic ("envファイルの読み込みに失敗しました。")
@@ -23,4 +24,10 @@ func GetEnvData() (*linebot.Client, error ) {
 		ACCESS,
 	)
 	return bot, err
+}
+
+func GetHotpepperToken() (HOTPEPPER string){
+
+  HOTPEPPER = os.Getenv("HOTPEPPER_TOKEN")
+	return HOTPEPPER
 }
