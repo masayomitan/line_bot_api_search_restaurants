@@ -2,9 +2,8 @@ package domain
 
 import (
 
-	// "line_bot_api_search_restaurants/service"
-)
 
+)
 
 // response APIレスポンス
 type Response struct {

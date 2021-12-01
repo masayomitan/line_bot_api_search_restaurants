@@ -5,8 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/line/line-bot-sdk-go/linebot"
-	"line_bot_api_search_restaurants/service"
 	"line_bot_api_search_restaurants/controller"
 )
 
@@ -24,6 +22,6 @@ func main() {
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	msg := "hello World!!!!"
+	msg := "top page"
 	fmt.Fprintf(w, msg)
 }
