@@ -16,9 +16,10 @@ func GetLineToken() (*linebot.Client, error ) {
 	if err != nil {
 		panic ("envファイルの読み込みに失敗しました。")
 	}
+
 	SECRET = os.Getenv("SECRET_TOKEN")
 	ACCESS = os.Getenv("ACCESS_TOKEN")
-
+	
 	bot, err := linebot.New(
 		SECRET,
 		ACCESS,

@@ -1,27 +1,24 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
-
-	"line_bot_api_search_restaurants/controller"
+	"context"
+	"log"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/aws/aws-lambda-go/lambda"
+	"line_bot_api_search_restaurants/handler"
 )
 
-var SECRET string
-var ACCESS string
 
 func main() {
-	// ハンドラの登録
-	http.HandleFunc("/", helloHandler)
-	http.HandleFunc("/callback", controller.LineHandler)
-
-	fmt.Println("http://localhost:8080")
-	// HTTPサーバを起動
-	log.Fatal(http.ListenAndServe(":8080", nil))
+    lambda.Start(helloHandler)
 }
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	msg := "top page"
-	fmt.Fprintf(w, msg)
+func helloHandler(ctx context.Context) {
+	// http.HandleFunc("/", handler.LineHandler)
+	handler := http.HandlerFunc(handler.LineHandler)
+	http.Handle("/", handler)
+	http.ListenAndServe(":8080", nil)
+	lc, _ := lambdacontext.FromContext(ctx)
+  log.Print(lc.Identity.CognitoIdentityPoolID)
 }

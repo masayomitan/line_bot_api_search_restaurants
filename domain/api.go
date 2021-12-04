@@ -1,7 +1,7 @@
 package domain
 
 import (
-
+  "net/http"
 
 )
 
@@ -36,4 +36,8 @@ type mobile struct {
 // urls URL一覧
 type urls struct {
 	PC string `json:"pc"`
+}
+type Api struct {
+	token string
+	httpclient *http.Client
 }

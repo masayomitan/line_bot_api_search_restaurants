@@ -1,4 +1,4 @@
-package controller
+package handler
 
 import (
 	"fmt"
@@ -11,12 +11,13 @@ import (
 )
 
 func LineHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
 	fmt.Println()
 	bot, err := service.GetLineToken()
 	if err != nil {
 		// Do something when something bad happened.
 		log.Fatal(err)
-		return
+		return 
 	}
 
 	//リクエスト取得
@@ -27,7 +28,7 @@ func LineHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.WriteHeader(500)
 		}
-		return
+		return 
 	}
 	for _, event := range events {
 
@@ -45,4 +46,6 @@ func LineHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	
+	return 
 }
