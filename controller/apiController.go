@@ -71,5 +71,4 @@ func GetRestoInfo(lat string, lng string) []*linebot.CarouselColumn  {
 		ccs = append(ccs, cc)
 	}
 	return ccs
-
 }

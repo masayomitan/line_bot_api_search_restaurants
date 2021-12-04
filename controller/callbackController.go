@@ -14,6 +14,7 @@ func LineHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println()
 	bot, err := service.GetLineToken()
 	if err != nil {
+		// Do something when something bad happened.
 		log.Fatal(err)
 		return
 	}
