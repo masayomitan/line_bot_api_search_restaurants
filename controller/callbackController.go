@@ -11,12 +11,14 @@ import (
 )
 
 func LineHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println()
 	bot, err := service.GetLineToken()
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
+	//リクエスト取得
 	events, err := bot.ParseRequest(r)
 	if err != nil {
 		if err == linebot.ErrInvalidSignature {

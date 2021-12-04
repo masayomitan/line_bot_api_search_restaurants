@@ -16,7 +16,7 @@ func main() {
 	http.HandleFunc("/", helloHandler)
 	http.HandleFunc("/callback", controller.LineHandler)
 
-	fmt.Println("http://localhost:8080 で起動中...")
+	fmt.Println("http://localhost:8080")
 	// HTTPサーバを起動
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

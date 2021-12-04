@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"io/ioutil"
 	"encoding/json"
-
+	"unicode/utf8"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"strconv"
 	"line_bot_api_search_restaurants/domain"
@@ -22,14 +22,18 @@ func SendRestoInfo(bot *linebot.Client, e *linebot.Event) {
 
 	replyMsg := GetRestoInfo(lat, lng)
 
-	_, err := bot.ReplyMessage(e.ReplyToken, linebot.NewTextMessage(replyMsg)).Do()
-	if err != nil {
+	res := linebot.NewTemplateMessage(
+		"レストラン一覧",
+		linebot.NewCarouselTemplate(replyMsg...).WithImageOptions("rectangle", "cover"),
+	)
+
+	if _, err := bot.ReplyMessage(e.ReplyToken, res).Do(); err != nil {
 		log.Print(err)
 	}
 }
 
 
-func GetRestoInfo(lat string, lng string) string {
+func GetRestoInfo(lat string, lng string) []*linebot.CarouselColumn  {
 	apikey :=  service.GetHotpepperToken()
 	url := fmt.Sprintf(
 		"https://webservice.recruit.co.jp/hotpepper/gourmet/v1/?format=json&key=%s&lat=%s&lng=%s",
@@ -51,9 +55,21 @@ func GetRestoInfo(lat string, lng string) string {
 		log.Fatal(err)
 	}
 
-	var info string
+	var ccs []*linebot.CarouselColumn
 	for _, shop := range data.Results.Shop {
-		info += shop.Name + "\n" + shop.Address + "\n\n"
+		addr := shop.Address
+		if 60 < utf8.RuneCountInString(addr) {
+			addr = string([]rune(addr)[:60])
+		}
+
+		cc := linebot.NewCarouselColumn(
+			shop.Photo.Mobile.L,
+			shop.Name,
+			addr,
+			linebot.NewURIAction("ホットペッパーで開く", shop.URLS.PC),
+		).WithImageOptions("#FFFFFF")
+		ccs = append(ccs, cc)
 	}
-	return info
+	return ccs
+
 }
