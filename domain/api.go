@@ -2,7 +2,7 @@ package domain
 
 import (
   "net/http"
-
+	"github.com/line/line-bot-sdk-go/linebot"
 )
 
 // response APIレスポンス
@@ -37,7 +37,8 @@ type mobile struct {
 type urls struct {
 	PC string `json:"pc"`
 }
+
 type Api struct {
-	token string
-	httpclient *http.Client
+	Destination string           `json:"destination"`
+	Events      []*linebot.Event `json:"events"`
 }
